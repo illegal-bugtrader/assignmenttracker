@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .assignments-section {
+            padding: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .assignments-title {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .assignments-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .assignment-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid #ff6b6b;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+        }
+
+        .assignment-card.completed {
+            opacity: 0.7;
+            background: #e8f5e8;
+            text-decoration: line-through;
+        }
+
+        .priority-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .priority-high {
+            background: #ff4757;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .priority-overdue {
+            background: #dc3545;
+            color: white;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .assignment-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff6b6b;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .custom-checkbox.checked {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .custom-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .checkbox-label {
+            font-size: 0.9rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .assignment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .assignment-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .assignment-subject {
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .assignment-due {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .due-today {
+            border-left-color: #ffc107;
+        }
+
+        .due-soon {
+            border-left-color: #fd7e14;
+        }
+
+        .overdue {
+            border-left-color: #dc3545;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .empty-state img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Homework Tracker</h1>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section">
+                <h2 class="form-title">Add New Assignment</h2>
+                <form id="assignmentForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="title">Assignment Title</label>
+                            <input type="text" id="title" required placeholder="Enter assignment title">
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <select id="subject" required>
+                                <option value="">Select Subject</option>
+                                <option value="Math">Math</option>
+                                <option value="Science">Science</option>
+                                <option value="English">English</option>
+                                <option value="History">History</option>
+                                <option value="Art">Art</option>
+                                <option value="PE">PE</option>
+                                <option value="Music">Music</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="dueDate">Due Date</label>
+                            <input type="date" id="dueDate" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="add-btn">Add Assignment</button>
+                </form>
+            </div>
+
+            <div class="assignments-section">
+                <div class="section-header">
+                    <h2 class="assignments-title">Your Assignments</h2>
+                    <div class="filter-group">
+                        <label for="filterSubject">Filter:</label>
+                        <select id="filterSubject" class="filter-select">
+                            <option value="">All Subjects</option>
+                        </select>
+                        <select id="sortBy" class="filter-select">
+                            <option value="dueDate">Sort by Due Date</option>
+                            <option value="subject">Sort by Subject</option>
+                            <option value="title">Sort by Title</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="assignmentsList" class="assignments-grid">
+                    <div class="empty-state">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">📝</div>
+                        <h3>No assignments yet</h3>
+                        <p>Add your first assignment above to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class HomeworkTracker {
+            constructor() {
+                this.assignments = this.loadAssignments();
+                this.initializeEventListeners();
+                this.updateFilterOptions();
+                this.renderAssignments();
+            }
+
+            initializeEventListeners() {
+                const form = document.getElementById('assignmentForm');
+                const addBtn = document.querySelector('.add-btn');
+                const filterSubject = document.getElementById('filterSubject');
+                const sortBy = document.getElementById('sortBy');
+
+                // Handle both form submit and button click
+                form.addEventListener('submit', (e) => this.handleSubmit(e));
+                addBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.handleSubmit(e);
+                });
+                
+                filterSubject.addEventListener('change', () => this.renderAssignments());
+                sortBy.addEventListener('change', () => this.renderAssignments());
+            }
+
+            handleSubmit(e) {
+                if (e) e.preventDefault();
+                
+                console.log('Form submitted'); // Debug log
+                
+                const titleInput = document.getElementById('title');
+                const subjectInput = document.getElementById('subject');
+                const dueDateInput = document.getElementById('dueDate');
+                
+                const title = titleInput.value.trim();
+                const subject = subjectInput.value;
+                const dueDate = dueDateInput.value;
+
+                console.log('Values:', { title, subject, dueDate }); // Debug log
+
+                if (!title || !subject || !dueDate) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                const assignment = {
+                    id: Date.now(),
+                    title,
+                    subject,
+                    dueDate,
+                    completed: false,
+                    createdAt: new Date().toISOString()
+                };
+
+                console.log('Creating assignment:', assignment); // Debug log
+
+                this.assignments.push(assignment);
+                this.saveAssignments();
+                this.updateFilterOptions();
+                this.renderAssignments();
+                
+                // Reset form
+                titleInput.value = '';
+                subjectInput.value = '';
+                dueDateInput.value = '';
+                
+                // Show success feedback
+                const button = document.querySelector('.add-btn');
+                const originalText = button.textContent;
+                button.textContent = 'Added!';
+                button.style.background = '#48bb78';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #feca57 100%)';
+                }, 1000);
+                
+                console.log('Assignment added successfully'); // Debug log
+            }
+
+            toggleComplete(id) {
+                const assignment = this.assignments.find(a => a.id === id);
+                if (assignment) {
+                    assignment.completed = !assignment.completed;
+                    this.saveAssignments();
+                    this.renderAssignments();
+                }
+            }
+
+            deleteAssignment(id) {
+                this.assignments = this.assignments.filter(a => a.id !== id);
+                this.saveAssignments();
+                this.updateFilterOptions();
+                this.renderAssignments();
+            }
+
+            getFilteredAndSortedAssignments() {
+                const filterSubject = document.getElementById('filterSubject').value;
+                const sortBy = document.getElementById('sortBy').value;
+
+                let filtered = this.assignments;
+                
+                if (filterSubject) {
+                    filtered = filtered.filter(a => a.subject === filterSubject);
+                }
+
+                filtered.sort((a, b) => {
+                    switch (sortBy) {
+                        case 'subject':
+                            return a.subject.localeCompare(b.subject);
+                        case 'title':
+                            return a.title.localeCompare(b.title);
+                        case 'dueDate':
+                        default:
+                            return new Date(a.dueDate) - new Date(b.dueDate);
+                    }
+                });
+
+                return filtered;
+            }
+
+            getPriorityInfo(dueDate) {
+                const today = new Date();
+                const due = new Date(dueDate);
+                const diffTime = due - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays < 0) {
+                    return { class: 'priority-overdue', text: 'OVERDUE' };
+                }
+                if (diffDays <= 2) {
+                    return { class: 'priority-high', text: 'URGENT' };
+                }
+                return null;
+            }
+
+            getDueDateClass(dueDate) {
+                const today = new Date();
+                const due = new Date(dueDate);
+                const diffTime = due - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays < 0) return 'overdue';
+                if (diffDays === 0) return 'due-today';
+                if (diffDays <= 3) return 'due-soon';
+                return '';
+            }
+
+            formatDueDate(dueDate) {
+                const today = new Date();
+                const due = new Date(dueDate);
+                const diffTime = due - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                const formatted = due.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                if (diffDays < 0) return `${formatted} (${Math.abs(diffDays)} days overdue)`;
+                if (diffDays === 0) return `${formatted} (Due Today!)`;
+                if (diffDays === 1) return `${formatted} (Due Tomorrow)`;
+                if (diffDays <= 7) return `${formatted} (${diffDays} days left)`;
+                
+                return formatted;
+            }
+
+            renderAssignments() {
+                const container = document.getElementById('assignmentsList');
+                const assignments = this.getFilteredAndSortedAssignments();
+
+                if (assignments.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div style="font-size: 4rem; margin-bottom: 20px;">📝</div>
+                            <h3>No assignments found</h3>
+                            <p>Try adjusting your filters or add a new assignment!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = assignments.map(assignment => {
+                    const priorityInfo = this.getPriorityInfo(assignment.dueDate);
+                    const completedClass = assignment.completed ? 'completed' : '';
+                    
+                    return `
+                        <div class="assignment-card ${this.getDueDateClass(assignment.dueDate)} ${completedClass}">
+                            ${priorityInfo ? `<div class="priority-indicator ${priorityInfo.class}">${priorityInfo.text}</div>` : ''}
+                            <div class="assignment-header">
+                                <div>
+                                    <div class="assignment-title">${assignment.title}</div>
+                                    <div class="assignment-due">Due: ${this.formatDueDate(assignment.dueDate)}</div>
+                                </div>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <span class="assignment-subject">${assignment.subject}</span>
+                                    <button class="delete-btn" onclick="tracker.deleteAssignment(${assignment.id})">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="assignment-controls">
+                                <div class="checkbox-container">
+                                    <div class="custom-checkbox ${assignment.completed ? 'checked' : ''}" 
+                                         onclick="tracker.toggleComplete(${assignment.id})"></div>
+                                    <span class="checkbox-label" onclick="tracker.toggleComplete(${assignment.id})">
+                                        ${assignment.completed ? 'Completed' : 'Mark as Complete'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateFilterOptions() {
+                const filterSelect = document.getElementById('filterSubject');
+                const subjects = [...new Set(this.assignments.map(a => a.subject))].sort();
+                
+                filterSelect.innerHTML = '<option value="">All Subjects</option>' +
+                    subjects.map(subject => `<option value="${subject}">${subject}</option>`).join('');
+            }
+
+            saveAssignments() {
+                const data = JSON.stringify(this.assignments);
+                // Since we can't use localStorage, we'll store in a global variable
+                window.homeworkData = data;
+            }
+
+            loadAssignments() {
+                // Since we can't use localStorage, we'll use a global variable
+                if (window.homeworkData) {
+                    try {
+                        return JSON.parse(window.homeworkData);
+                    } catch (e) {
+                        return [];
+                    }
+                }
+                return [];
+            }
+        }
+
+        // Initialize the app
+        const tracker = new HomeworkTracker();
+    </script>
+</body>
+</html>
